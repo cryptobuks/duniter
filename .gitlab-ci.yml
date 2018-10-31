@@ -38,6 +38,7 @@ build:
 
 releases:test:
   <<: *build_releases
+  when: always
   script:
     - rm -rf node_modules/
     - bash "release/arch/linux/build-lin.sh" "$(date +%Y%m%d).$(date +%H%M).$(date +%S)"
