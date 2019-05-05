@@ -203,7 +203,7 @@ node-pre-gyp --runtime=node-webkit --target=$NW_VERSION configure \
 
 cd "${RELEASES}/desktop_/node_modules/"
 nw_compile wotb nw_copy
-nw_compile naclb nw_copy
+nw_compile sodium nw_copy
 nw_compile leveldown nw_copy "build/Release/"
 nw_compile sqlite3 nw_copy_node
 

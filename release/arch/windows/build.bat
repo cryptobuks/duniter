@@ -86,11 +86,11 @@ call node-pre-gyp --runtime=node-webkit --target=%NW_VERSION% --msvs_version=201
 call node-pre-gyp --runtime=node-webkit --target=%NW_VERSION% --msvs_version=2015 configure
 call node-pre-gyp --runtime=node-webkit --target=%NW_VERSION% --msvs_version=2015 build
 copy %cd%\lib\binding\Release\node-webkit-%NW_RELEASE%-win32-x64\wotb.node %cd%\lib\binding\Release\node-v%ADDON_VERSION%-win32-x64\wotb.node /Y
-cd ../naclb
+cd ../sodium
 call npm install --build-from-source
 call node-pre-gyp --runtime=node-webkit --target=%NW_VERSION% --msvs_version=2015 configure
 call node-pre-gyp --runtime=node-webkit --target=%NW_VERSION% --msvs_version=2015 build
-copy %cd%\lib\binding\Release\node-webkit-%NW_RELEASE%-win32-x64\naclb.node %cd%\lib\binding\Release\node-v%ADDON_VERSION%-win32-x64\naclb.node /Y
+copy %cd%\lib\binding\Release\node-webkit-%NW_RELEASE%-win32-x64\naclb.node %cd%\lib\binding\Release\node-v%ADDON_VERSION%-win32-x64\sodium.node /Y
 cd ../leveldown
 call npm install --build-from-source
 echo "Patch de leveldown..."

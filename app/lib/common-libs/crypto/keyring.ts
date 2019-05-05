@@ -16,7 +16,7 @@ import {decodeBase64, decodeUTF8, encodeBase64} from "./nacl-util"
 
 const nacl        = require('tweetnacl');
 const seedrandom  = require('seedrandom');
-const naclBinding = require('naclb');
+const sodium      = require('sodium');
 
 const crypto_sign_BYTES = 64;
 
@@ -43,6 +43,10 @@ export class Key {
     return Base58decode(this.secretKey)
   }
 
+  private rawPub() {
+    return Base58decode(this.publicKey)
+  }
+
   json() {
     return {
       pub: this.publicKey,
@@ -55,8 +59,9 @@ export class Key {
   }
 
   signSync(msg:string) {
-    const m = decodeUTF8(msg);
-    const signedMsg = naclBinding.sign(m, this.rawSec());
+    const key = new sodium.Key.Sign(encodeBase64(this.rawPub()), encodeBase64(this.rawSec()), 'base64')
+    const signer = new sodium.Sign(key)
+    const signedMsg = signer.sign(msg, 'utf8').sign;
     const sig = new Uint8Array(crypto_sign_BYTES);
     for (let i = 0; i < sig.length; i++) {
       sig[i] = signedMsg[i];
@@ -89,12 +94,9 @@ export function verify(rawMsg:string, rawSig:string, rawPub:string) {
   const msg = decodeUTF8(rawMsg);
   const sig = decodeBase64(rawSig);
   const pub = Base58decode(rawPub);
-  const m = new Uint8Array(crypto_sign_BYTES + msg.length);
-  const sm = new Uint8Array(crypto_sign_BYTES + msg.length);
-  let i;
-  for (i = 0; i < crypto_sign_BYTES; i++) sm[i] = sig[i];
-  for (i = 0; i < msg.length; i++) sm[i+crypto_sign_BYTES] = msg[i];
-
   // Call to verification lib...
-  return naclBinding.verify(m, sm, pub);
+  return sig.length === 64 && sodium.Sign.verifyDetached({
+    sign: sig,
+    publicKey: pub
+  }, msg);
 }
